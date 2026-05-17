@@ -7,15 +7,19 @@ import ModuleDetail from "./pages/ModuleDetail";
 import CrossellDetail from "./pages/CrossellDetail";
 import { PurchaseProvider } from "./contexts/PurchaseContext";
 
+import AuthPage from "./pages/AuthPage";
+import { RequireAuth } from "./components/RequireAuth";
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <PurchaseProvider>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/modulo/:slug" element={<ModuleDetail />} />
-          <Route path="/extra/:slug" element={<CrossellDetail />} />
+          <Route path="/login" element={<AuthPage />} />
+          <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
+          <Route path="/modulo/:slug" element={<RequireAuth><ModuleDetail /></RequireAuth>} />
+          <Route path="/extra/:slug" element={<RequireAuth><CrossellDetail /></RequireAuth>} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </BrowserRouter>

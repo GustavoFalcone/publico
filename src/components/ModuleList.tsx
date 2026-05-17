@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -6,6 +7,7 @@ import {
   Lock,
   Sparkles,
   Timer,
+  Clock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getAllModulesSorted, crossells, type BafoModule } from "@/data/modules";
@@ -122,21 +124,42 @@ function ModuleCard({ mod, index }: { mod: BafoModule; index: number }) {
 }
 
 function CrossellCard({ mod, index }: { mod: BafoModule; index: number }) {
+  const [showSoon, setShowSoon] = useState(false);
   const Icon = mod.icon;
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setShowSoon(true);
+    setTimeout(() => setShowSoon(false), 3000);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.2 + index * 0.08 }}
     >
-      <Link
-        to={`/extra/${mod.slug}`}
+      <div
+        onClick={handleClick}
         className={cn(
-          "group relative block overflow-hidden rounded-xl border border-bafo-gold/30 p-5 transition-all",
+          "cursor-pointer group relative block overflow-hidden rounded-xl border border-bafo-gold/30 p-5 transition-all",
           "bg-gradient-to-br from-bafo-coal via-bafo-coal to-bafo-black",
           "hover:border-bafo-gold/70 hover:shadow-[0_18px_50px_-18px_rgba(242,194,48,0.5)]"
         )}
       >
+        {showSoon && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-2 bg-bafo-black/95 backdrop-blur-md"
+          >
+            <Clock className="h-8 w-8 text-bafo-gold animate-bounce" />
+            <span className="font-display text-xl tracking-wider text-bafo-gold">
+              Disponível em breve
+            </span>
+          </motion.div>
+        )}
+
         {/* shine line topo */}
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-bafo-gold to-transparent" />
 
@@ -174,7 +197,7 @@ function CrossellCard({ mod, index }: { mod: BafoModule; index: number }) {
             </div>
           </div>
         </div>
-      </Link>
+      </div>
     </motion.div>
   );
 }

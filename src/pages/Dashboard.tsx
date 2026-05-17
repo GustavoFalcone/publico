@@ -7,9 +7,12 @@ import { Crown, Flame, Trophy, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { usePurchase } from "@/contexts/PurchaseContext";
 import { getAllModulesSorted } from "@/data/modules";
+import { useSession } from "@/lib/auth";
 
 export default function Dashboard() {
   const { purchasedAt, now, travelDays, resetPurchase } = usePurchase();
+  const { data: session } = useSession();
+  const isAdmin = session?.user?.email === "gustavofalconeee@gmail.com";
 
   const daysSincePurchase = useMemo(() => {
     return Math.floor((now - purchasedAt) / (24 * 60 * 60 * 1000));
@@ -21,10 +24,10 @@ export default function Dashboard() {
   ).length;
 
   return (
-    <div className="relative flex min-h-screen w-full bg-bafo-black bg-grid">
+    <div className="relative flex min-h-screen w-full overflow-x-hidden bg-bafo-black bg-grid">
       <Sidebar />
 
-      <main className="flex min-h-screen flex-1 flex-col pl-[3.4rem]">
+      <main className="flex min-h-screen flex-1 min-w-0 flex-col pl-[3.4rem]">
         {/* Halo decorativo de fundo */}
         <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[420px] bg-gradient-to-b from-bafo-royal/20 via-bafo-royal/5 to-transparent" />
 
@@ -51,6 +54,12 @@ export default function Dashboard() {
               <Stat icon={<Sparkles className="h-3.5 w-3.5" />} label="Plano" value="Rei do Bafo" highlight />
             </div>
           </div>
+          {/* Status para Mobile */}
+          <div className="flex w-full items-center gap-2 overflow-x-auto px-4 pb-3 scrollbar-none md:hidden">
+            <Stat icon={<Trophy className="h-3.5 w-3.5 shrink-0" />} label="Módulos" value={`${liberados}/${all.length}`} />
+            <Stat icon={<Flame className="h-3.5 w-3.5 shrink-0" />} label="Treino" value={`${daysSincePurchase}d`} />
+            <Stat icon={<Sparkles className="h-3.5 w-3.5 shrink-0" />} label="Plano" value="Rei do Bafo" highlight />
+          </div>
         </header>
 
         {/* Conteúdo */}
@@ -59,12 +68,13 @@ export default function Dashboard() {
           <section className="grid grid-cols-1 gap-6 lg:grid-cols-[420px,1fr]">
             <div>
               <VideoFrame />
-              {/* Painel de simulação de tempo (dev/teste) */}
-              <DevTimeControls
-                onAdvance3={() => travelDays(3)}
-                onAdvance7={() => travelDays(7)}
-                onReset={resetPurchase}
-              />
+              {isAdmin && (
+                <DevTimeControls
+                  onAdvance3={() => travelDays(3)}
+                  onAdvance7={() => travelDays(7)}
+                  onReset={resetPurchase}
+                />
+              )}
             </div>
 
             <motion.div
@@ -97,7 +107,7 @@ export default function Dashboard() {
                 comum até a técnica que vira tudo.
               </p>
 
-              <div className="mt-6 grid grid-cols-3 gap-3 max-w-md">
+              <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3 max-w-md">
                 <PromiseBlock value="03" label="módulos liberados na hora" />
                 <PromiseBlock value="03" label="técnicas por nível (P/M/G)" />
                 <PromiseBlock value="∞" label="suporte 24h" gold />

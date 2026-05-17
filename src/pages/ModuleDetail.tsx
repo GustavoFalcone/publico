@@ -49,9 +49,9 @@ export default function ModuleDetail() {
   const prev = idx > 0 ? all[idx - 1] : null;
 
   return (
-    <div className="relative flex min-h-screen w-full bg-bafo-black">
+    <div className="relative flex min-h-screen w-full overflow-x-hidden bg-bafo-black">
       <Sidebar />
-      <main className="flex min-h-screen flex-1 flex-col pl-[3.4rem]">
+      <main className="flex min-h-screen flex-1 min-w-0 flex-col pl-[3.4rem]">
         <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[420px] bg-gradient-to-b from-bafo-royal/25 via-bafo-royal/5 to-transparent" />
 
         {/* Header navegação */}

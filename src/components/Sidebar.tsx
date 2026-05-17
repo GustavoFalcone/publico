@@ -28,6 +28,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { getAllModulesSorted, crossells } from "@/data/modules";
 import { getUnlockState, usePurchase } from "@/contexts/PurchaseContext";
+import { useSession, signOut } from "@/lib/auth";
 
 const sidebarVariants = {
   open: { width: "17rem" },
@@ -68,8 +69,17 @@ export function Sidebar() {
   const location = useLocation();
   const pathname = location.pathname;
   const { purchasedAt, now } = usePurchase();
+  const { data: session } = useSession();
 
   const allModules = getAllModulesSorted();
+  const userName = session?.user?.name || "Aluno Apelão";
+  const userEmail = session?.user?.email || "membro@reidobafo.com";
+  const initials = userName
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 
   return (
     <motion.aside
@@ -310,7 +320,7 @@ export function Sidebar() {
                       <div className="flex h-9 w-full flex-row items-center gap-2 rounded-md px-2 py-1.5 transition hover:bg-white/5">
                         <Avatar className="size-7">
                           <AvatarFallback className="bg-bafo-royal text-bafo-cream text-[11px] font-bold">
-                            AP
+                            {initials}
                           </AvatarFallback>
                         </Avatar>
                         <motion.li
@@ -319,7 +329,7 @@ export function Sidebar() {
                         >
                           {!isCollapsed && (
                             <>
-                              <p className="text-sm font-medium">Aluno Apelão</p>
+                              <p className="text-sm font-medium">{userName}</p>
                               <ChevronsUpDown className="ml-auto h-4 w-4 text-bafo-ash/70" />
                             </>
                           )}
@@ -330,13 +340,13 @@ export function Sidebar() {
                       <div className="flex flex-row items-center gap-2 p-2">
                         <Avatar className="size-7">
                           <AvatarFallback className="bg-bafo-royal text-bafo-cream text-[11px] font-bold">
-                            AP
+                            {initials}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex flex-col text-left">
-                          <span className="text-sm font-medium">Aluno Apelão</span>
+                          <span className="text-sm font-medium">{userName}</span>
                           <span className="line-clamp-1 text-xs text-bafo-ash">
-                            membro@reidobafo.com
+                            {userEmail}
                           </span>
                         </div>
                       </div>
@@ -344,7 +354,10 @@ export function Sidebar() {
                       <DropdownMenuItem className="flex items-center gap-2">
                         <UserCircle className="h-4 w-4" /> Perfil
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="flex items-center gap-2">
+                      <DropdownMenuItem 
+                        className="flex items-center gap-2 cursor-pointer text-bafo-red hover:bg-bafo-red/10"
+                        onClick={() => signOut()}
+                      >
                         <LogOut className="h-4 w-4" /> Sair
                       </DropdownMenuItem>
                     </DropdownMenuContent>
